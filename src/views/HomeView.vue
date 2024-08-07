@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import HelloWorld from '@/components/HelloWorld.vue'
+import ProductList from '@/components/ProductList.vue'
 </script>
 
 <template>
   <main>
-    <HelloWorld />
+    <ProductList />
   </main>
 </template>

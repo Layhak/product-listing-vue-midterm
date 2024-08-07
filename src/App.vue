@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
-import HomeIcon from '@/components/icons/HomeIcon.vue'
-import AboutIcon from '@/components/icons/AboutIcon.vue'
-import ContactIcon from '@/components/icons/ContactIcon.vue'
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -18,17 +15,17 @@ import { clsx } from 'clsx'
 
 const navitems = [
   {
-    icon: HomeIcon,
+    icon: 'radix-icons:home', // Iconify icon for Home
     href: '/',
     label: 'Home'
   },
   {
-    icon: AboutIcon,
+    icon: 'radix-icons:info-circled', // Iconify icon for About
     href: '/about',
     label: 'About'
   },
   {
-    icon: ContactIcon,
+    icon: 'radix-icons:envelope-open', // Iconify icon for Contact
     href: '/contact',
     label: 'Contact'
   }
@@ -43,23 +40,31 @@ const toggleColorMode = () => {
 </script>
 
 <template>
-  <header>
-    <NavigationMenu class="dark:bg-gray-900 bg-gray-200 flex justify-between">
+  <header class="sticky top-0 z-50 dark:bg-gray-900 bg-gray-200 py-2">
+    <NavigationMenu
+      class="flex justify-between mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8"
+    >
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuLink as="div">
-            <RouterLink to="/">
-              <img src="" alt="Logo" />
+          <NavigationMenuLink
+            as="div"
+            class="flex items-center gap-2 justify-center rounded-md p-2 text-sm font-medium transition-colors"
+          >
+            <RouterLink to="/" class="flex items-center gap-2 justify-cente">
+              <Icon icon="fluent-emoji:shopping-bags" class="h-[2rem] w-[2rem] transition-all" />
+              <span class="font-semibold">Hak Shop</span>
             </RouterLink>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
       <NavigationMenuList>
-        <!-- Dynamically create navigation items -->
         <NavigationMenuItem v-for="item in navitems" :key="item.href">
           <NavigationMenuLink as="div">
-            <RouterLink :to="item.href" class="navigation-link">
-              <component :is="item.icon" class="icon" />
+            <RouterLink
+              :to="item.href"
+              class="flex items-center gap-2 justify-center rounded-md p-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
+            >
+              <Icon :icon="item.icon" class="h-[1rem] w-[1rem] transition-all" />
               {{ item.label }}
             </RouterLink>
           </NavigationMenuLink>
@@ -95,23 +100,3 @@ const toggleColorMode = () => {
     <RouterView />
   </main>
 </template>
-
-<style scoped>
-.navigation-link {
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  text-decoration: none;
-  color: inherit;
-}
-
-.navigation-link .icon {
-  margin-right: 0.5rem;
-}
-
-@media (max-width: 768px) {
-  .navigation-link {
-    padding: 0.5rem;
-  }
-}
-</style>
