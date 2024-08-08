@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRoute } from 'vue-router'
 import { Skeleton } from '@/components/ui/skeleton'
+import { cartItems, addToCart as sharedAddToCart } from '@/store/cartState' // import shared cart state and functions
 
 type Product = {
   id: number
@@ -27,6 +28,23 @@ const fetchProductDetail = async (productId: number) => {
     console.error('Error fetching product detail:', error)
   } finally {
     loading.value = false
+  }
+}
+
+const addToCart = (product: Product | null) => {
+  if (!product) return
+
+  // Check if product is already in cart
+  const existingItem = cartItems.value.find((cartItem) => cartItem.id === product.id)
+  if (!existingItem) {
+    sharedAddToCart({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      thumbnail: product.thumbnail
+    })
+  } else {
+    console.log(`Product with id ${product.id} already exists in the cart`)
   }
 }
 
@@ -69,41 +87,42 @@ onMounted(() => {
       </div>
     </div>
   </div>
-  <div v-else class="bg-gray-100 dark:bg-gray-950">
+
+  <div v-else class="bg-gray-100 dark:bg-gray-950 h-full">
     <div
       class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8"
     >
       <!-- Product details -->
       <div class="lg:max-w-lg lg:self-end">
-        <div class="mt-4">
+        <div class="mt-4" v-if="product">
           <h1
             class="text-3xl font-bold tracking-tight dark:text-gray-100 text-gray-900 sm:text-4xl"
           >
-            {{ product?.title }}
+            {{ product.title }}
           </h1>
         </div>
 
-        <section aria-labelledby="information-heading" class="mt-4">
+        <section aria-labelledby="information-heading" class="mt-4" v-if="product">
           <h2 id="information-heading" class="sr-only">Product information</h2>
 
           <div class="flex items-center">
-            <p class="text-xl text-blue-800 sm:text-2xl font-bold">${{ product?.price }}</p>
+            <p class="text-xl text-blue-500 sm:text-2xl font-bold">${{ product.price }}</p>
           </div>
 
           <div class="mt-4 space-y-6">
-            <p class="text-base text-gray-500">{{ product?.description }}</p>
+            <p class="text-base text-gray-500">{{ product.description }}</p>
           </div>
         </section>
       </div>
 
       <!-- Product image -->
-      <div class="mt-10 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:self-center">
+      <div class="mt-10 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:self-center" v-if="product">
         <div
           class="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800"
         >
           <img
-            :src="product?.thumbnail"
-            :alt="product?.title"
+            :src="product.thumbnail"
+            :alt="product.title"
             class="h-full w-full bg-gray-700 dark:bg-gray-100 object-cover object-center"
           />
         </div>
@@ -113,12 +132,13 @@ onMounted(() => {
       <div class="mt-10 lg:col-start-1 lg:row-start-2 lg:max-w-lg lg:self-start">
         <section aria-labelledby="options-heading">
           <div class="mt-10">
-            <button
+            <Button
               type="submit"
-              class="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+              class="flex w-full items-center justify-center border border-transparent bg-blue-500 px-8 py-3 text-base font-medium rounded-full text-gray-50 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+              @click="addToCart(product)"
             >
               Add to bag
-            </button>
+            </Button>
           </div>
         </section>
       </div>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import {
   NavigationMenu,
@@ -11,7 +10,10 @@ import { useColorMode } from '@vueuse/core'
 import { Icon } from '@iconify/vue'
 import { Button } from '@/components/ui/button'
 import { Toggle } from '@/components/ui/toggle'
-import { clsx } from 'clsx'
+import { cartItems } from '@/store/cartState'
+import { computed } from 'vue'
+
+const cartItemCount = computed(() => cartItems.value.length)
 
 const navitems = [
   {
@@ -23,11 +25,6 @@ const navitems = [
     icon: 'radix-icons:info-circled', // Iconify icon for About
     href: '/about',
     label: 'About'
-  },
-  {
-    icon: 'radix-icons:envelope-open', // Iconify icon for Contact
-    href: '/contact',
-    label: 'Contact'
   }
   // Add more items as needed
 ]
@@ -42,7 +39,7 @@ const toggleColorMode = () => {
 <template>
   <header class="sticky top-0 z-50 dark:bg-gray-900 bg-gray-200 py-2">
     <NavigationMenu
-      class="flex justify-between mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8"
+      class="flex justify-between mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8 dark:text-gray-100 text-gray-900"
     >
       <NavigationMenuList>
         <NavigationMenuItem>
@@ -50,7 +47,7 @@ const toggleColorMode = () => {
             as="div"
             class="flex items-center gap-2 justify-center rounded-md p-2 text-sm font-medium transition-colors"
           >
-            <RouterLink to="/" class="flex items-center gap-2 justify-cente">
+            <RouterLink to="/" class="flex items-center gap-2 justify-center">
               <Icon icon="fluent-emoji:shopping-bags" class="h-[2rem] w-[2rem] transition-all" />
               <span class="font-semibold">Hak Shop</span>
             </RouterLink>
@@ -71,6 +68,20 @@ const toggleColorMode = () => {
         </NavigationMenuItem>
       </NavigationMenuList>
       <NavigationMenuList>
+        <NavigationMenuItem
+          class="flex items-center gap-2 justify-center rounded-md p-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
+        >
+          <Button variant="ghost" class="flex gap-2 justify-center" as-child>
+            <RouterLink to="/cart">
+              <Icon
+                icon="lucide:shopping-bag"
+                class="h-[1.5rem] w-[1.5rem] rotate-0 scale-100 transition-all"
+              />
+              <span class="sr-only">cart</span>
+              <span>{{ cartItemCount }}</span>
+            </RouterLink>
+          </Button>
+        </NavigationMenuItem>
         <NavigationMenuItem>
           <Toggle
             :pressed="colorMode === 'dark'"
@@ -96,7 +107,9 @@ const toggleColorMode = () => {
       </NavigationMenuList>
     </NavigationMenu>
   </header>
-  <main>
-    <RouterView />
+  <main class="bg-gray-50 min-h-full py-10 dark:bg-gray-950">
+    <div class="mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+      <RouterView />
+    </div>
   </main>
 </template>
