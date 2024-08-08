@@ -1,6 +1,22 @@
 <script lang="ts" setup>
-import { type PropType, computed, ref } from 'vue'
+import { type PropType, h, computed, ref } from 'vue'
 import { removeFromCart, sendToTelegram } from '@/store/cartState' // Update with new state location
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
+import * as z from 'zod'
+
+import { Button } from '@/components/ui/button'
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Toaster } from '@/components/ui/toast'
+import { toast } from '@/components/ui/toast'
 
 // Define the type for a cart item
 type CartItem = {
@@ -18,6 +34,29 @@ const props = defineProps({
   }
 })
 
+const formSchema = toTypedSchema(
+  z.object({
+    fullname: z.string().min(2).max(50),
+    email: z.string().email(),
+    phone: z.string().min(9).max(11).regex(/^\d+$/, 'Phone number must contain only digits'),
+    address: z.string().min(2).max(50)
+  })
+)
+
+const { handleSubmit, errors, resetForm } = useForm({
+  validationSchema: formSchema
+})
+const onSubmit = handleSubmit((values) => {
+  // if (errors.value) return
+  console.log(values)
+  sendToTelegram(values)
+  toast({
+    variant: 'default',
+    description: 'Your Request has been sent to the server'
+  })
+  resetForm()
+})
+
 // Computed for subtotal, shipping, tax, and total
 const subtotal = computed(() => props.cartItems.reduce((total, item) => total + item.price, 0))
 const shipping = ref(5) // Fixed shipping for now
@@ -26,6 +65,7 @@ const total = computed(() => subtotal.value + shipping.value + tax.value)
 </script>
 
 <template>
+  <Toaster />
   <h1 class="text-3xl font-bold tracking-tight dark:text-gray-100 text-gray-900">Shopping Cart</h1>
   <div v-if="cartItems.length > 0">
     <h2 class="sr-only">Items in your shopping cart</h2>
@@ -96,13 +136,49 @@ const total = computed(() => subtotal.value + shipping.value + tax.value)
       </div>
     </div>
     <div class="mt-10">
-      <button
-        @click.prevent="sendToTelegram"
-        type="button"
-        class="w-full rounded-md border border-transparent bg-blue-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50"
-      >
-        Checkout
-      </button>
+      <form class="w-2/3 space-y-6" @submit.prevent="onSubmit">
+        <FormField name="fullname" v-slot="{ field, errors }">
+          <FormItem>
+            <FormLabel>Full Name</FormLabel>
+            <FormControl>
+              <Input type="text" placeholder="John Doe" v-bind="field" />
+            </FormControl>
+            <FormDescription>This is your public display name.</FormDescription>
+            <FormMessage>{{ errors.length ? errors[0] : '' }}</FormMessage>
+          </FormItem>
+        </FormField>
+        <FormField name="email" v-slot="{ field, errors }">
+          <FormItem>
+            <FormLabel>Email</FormLabel>
+            <FormControl>
+              <Input type="text" placeholder="example@example.com" v-bind="field" />
+            </FormControl>
+            <FormDescription>This is your public display email.</FormDescription>
+            <FormMessage>{{ errors.length ? errors[0] : '' }}</FormMessage>
+          </FormItem>
+        </FormField>
+        <FormField name="phone" v-slot="{ field, errors }">
+          <FormItem>
+            <FormLabel>Phone</FormLabel>
+            <FormControl>
+              <Input type="text" placeholder="1234567890" v-bind="field" />
+            </FormControl>
+            <FormDescription>This is your public display phone.</FormDescription>
+            <FormMessage>{{ errors.length ? errors[0] : '' }}</FormMessage>
+          </FormItem>
+        </FormField>
+        <FormField name="address" v-slot="{ field, errors }">
+          <FormItem>
+            <FormLabel>Address</FormLabel>
+            <FormControl>
+              <Input type="text" placeholder="123 Main St" v-bind="field" />
+            </FormControl>
+            <FormDescription>This is your public display address.</FormDescription>
+            <FormMessage>{{ errors.length ? errors[0] : '' }}</FormMessage>
+          </FormItem>
+        </FormField>
+        <Button type="submit">Submit</Button>
+      </form>
     </div>
     <div class="mt-6 text-center text-sm text-gray-500">
       <p>

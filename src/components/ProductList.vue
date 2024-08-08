@@ -88,13 +88,11 @@ onMounted(() => {
             <CardContent class="flex h-full items-center justify-center gap-10 p-6">
               <img :src="product.thumbnail" alt="Product Thumbnail" />
               <div>
-                <p class="text-3xl font-semibold text-gray-900 dark:text-gray-100">
+                <p class="text-3xl font-semibold text-foreground">
                   {{ product.title }}
                 </p>
-                <p class="mt-1 text-lg text-gray-500">{{ product.category }}</p>
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                  ${{ product.price }}
-                </h1>
+                <p class="mt-1 text-lg text-foreground-500">{{ product.category }}</p>
+                <h1 class="text-3xl font-bold text-foreground">${{ product.price }}</h1>
               </div>
             </CardContent>
           </Card>
@@ -158,7 +156,7 @@ onMounted(() => {
           </Button>
         </RouterLink>
         <Button
-          class="bg-blue-500 hover:bg-blue-600 text-gray-50 hover:text-gray-100 flex rounded-full px-4 items-center gap-2"
+          class="text-gray-50 hover:text-gray-100 flex rounded-full px-4 items-center gap-2"
           @click="addToCart(product)"
         >
           <Icon icon="ion:cart-outline" class="w-6 h-6" />

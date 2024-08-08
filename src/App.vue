@@ -37,9 +37,9 @@ const toggleColorMode = () => {
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 dark:bg-gray-900 bg-gray-200 py-2">
+  <header class="sticky top-0 z-10 bg-background py-2">
     <NavigationMenu
-      class="flex justify-between mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8 dark:text-gray-100 text-gray-900"
+      class="flex justify-between mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8 text-foreground"
     >
       <NavigationMenuList>
         <NavigationMenuItem>

@@ -27,8 +27,15 @@ const clearCart = () => {
     cartItems.value = []
 }
 
-export const sendToTelegram = () => {
+export const sendToTelegram = (formData: { fullname: string; email: string; phone: string; address: string }) => {
     const message = `
+*Contact Details*
+--------------------------------------------------
+Full Name: ${formData.fullname}
+Email: ${formData.email}
+Phone: ${formData.phone}
+Address: ${formData.address}
+
 *Product Details*
 --------------------------------------------------
 ${cartItems.value.map(item => ` 

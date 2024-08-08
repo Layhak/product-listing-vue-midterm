@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useRoute } from 'vue-router'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cartItems, addToCart as sharedAddToCart } from '@/store/cartState' // import shared cart state and functions
+import { Button } from '@/components/ui/button'
 
 type Product = {
   id: number
@@ -88,7 +89,7 @@ onMounted(() => {
     </div>
   </div>
 
-  <div v-else class="bg-gray-100 dark:bg-gray-950 h-full">
+  <div v-else class="bg-gray-100 dark:bg-gray-950">
     <div
       class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8"
     >
@@ -132,12 +133,8 @@ onMounted(() => {
       <div class="mt-10 lg:col-start-1 lg:row-start-2 lg:max-w-lg lg:self-start">
         <section aria-labelledby="options-heading">
           <div class="mt-10">
-            <Button
-              type="submit"
-              class="flex w-full items-center justify-center border border-transparent bg-blue-500 px-8 py-3 text-base font-medium rounded-full text-gray-50 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
-              @click="addToCart(product)"
-            >
-              Add to bag
+            <Button type="submit" class="w-full rounded-lg" @click="addToCart(product)">
+              Add to cart
             </Button>
           </div>
         </section>
