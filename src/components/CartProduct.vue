@@ -136,7 +136,7 @@ const total = computed(() => subtotal.value + shipping.value + tax.value)
       </div>
     </div>
     <div class="mt-10">
-      <form class="w-2/3 space-y-6" @submit.prevent="onSubmit">
+      <form class="w-2/3 space-y-6 text-foreground" @submit.prevent="onSubmit">
         <FormField name="fullname" v-slot="{ field, errors }">
           <FormItem>
             <FormLabel>Full Name</FormLabel>
