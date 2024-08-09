@@ -171,7 +171,6 @@ const total = computed(() => subtotal.value + shipping.value + tax.value)
             <FormControl>
               <Input type="text" placeholder="John Doe" v-bind="field" />
             </FormControl>
-            <FormDescription>This is your public display name.</FormDescription>
             <FormMessage>{{ errors.length ? errors[0] : '' }}</FormMessage>
           </FormItem>
         </FormField>
@@ -181,7 +180,6 @@ const total = computed(() => subtotal.value + shipping.value + tax.value)
             <FormControl>
               <Input type="text" placeholder="example@example.com" v-bind="field" />
             </FormControl>
-            <FormDescription>This is your public display email.</FormDescription>
             <FormMessage>{{ errors.length ? errors[0] : '' }}</FormMessage>
           </FormItem>
         </FormField>
@@ -191,7 +189,6 @@ const total = computed(() => subtotal.value + shipping.value + tax.value)
             <FormControl>
               <Input type="text" placeholder="1234567890" v-bind="field" />
             </FormControl>
-            <FormDescription>This is your public display phone.</FormDescription>
             <FormMessage>{{ errors.length ? errors[0] : '' }}</FormMessage>
           </FormItem>
         </FormField>
@@ -201,7 +198,6 @@ const total = computed(() => subtotal.value + shipping.value + tax.value)
             <FormControl>
               <Input type="text" placeholder="123 Main St" v-bind="field" />
             </FormControl>
-            <FormDescription>This is your public display address.</FormDescription>
             <FormMessage>{{ errors.length ? errors[0] : '' }}</FormMessage>
           </FormItem>
         </FormField>
