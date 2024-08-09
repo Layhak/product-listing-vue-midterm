@@ -42,7 +42,8 @@ const addToCart = (product: Product | null) => {
       id: product.id,
       title: product.title,
       price: product.price,
-      thumbnail: product.thumbnail
+      thumbnail: product.thumbnail,
+      quantity: 1
     })
   } else {
     console.log(`Product with id ${product.id} already exists in the cart`)
