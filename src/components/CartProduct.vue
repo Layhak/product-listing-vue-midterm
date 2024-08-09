@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { type PropType, h, computed, ref } from 'vue'
-import { removeFromCart, sendToTelegram } from '@/store/cartState' // Update with new state location
+import { type PropType, ref, computed } from 'vue'
+import { removeFromCart, sendToTelegram } from '@/store/cartState'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
@@ -17,16 +17,23 @@ import {
 import { Input } from '@/components/ui/input'
 import { Toaster } from '@/components/ui/toast'
 import { toast } from '@/components/ui/toast'
+import {
+  NumberField,
+  NumberFieldContent,
+  NumberFieldDecrement,
+  NumberFieldIncrement,
+  NumberFieldInput
+} from '@/components/ui/number-field'
+import { Label } from '@/components/ui/label'
 
-// Define the type for a cart item
 type CartItem = {
   id: number
   title: string
   price: number
   thumbnail: string
+  quantity: number
 }
 
-// Props
 const props = defineProps({
   cartItems: {
     type: Array as PropType<CartItem[]>,
@@ -46,9 +53,8 @@ const formSchema = toTypedSchema(
 const { handleSubmit, errors, resetForm } = useForm({
   validationSchema: formSchema
 })
+
 const onSubmit = handleSubmit((values) => {
-  // if (errors.value) return
-  console.log(values)
   sendToTelegram(values)
   toast({
     variant: 'default',
@@ -57,10 +63,15 @@ const onSubmit = handleSubmit((values) => {
   resetForm()
 })
 
-// Computed for subtotal, shipping, tax, and total
-const subtotal = computed(() => props.cartItems.reduce((total, item) => total + item.price, 0))
-const shipping = ref(5) // Fixed shipping for now
-const tax = computed(() => subtotal.value * 0.08) // Assuming 8% tax
+const updateQuantity = (item: CartItem, quantity: number) => {
+  item.quantity = quantity
+}
+
+const subtotal = computed(() =>
+  props.cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
+)
+const shipping = ref(5)
+const tax = computed(() => subtotal.value * 0.08)
 const total = computed(() => subtotal.value + shipping.value + tax.value)
 </script>
 
@@ -89,8 +100,25 @@ const total = computed(() => subtotal.value + shipping.value + tax.value)
                     >{{ product.title }}
                   </RouterLink>
                 </h3>
+                <NumberField
+                  id="quantity"
+                  :default-value="product.quantity"
+                  :min="1"
+                  :max="999"
+                  class="text-foreground w-1/4 space-y-2"
+                  @update:model-value="updateQuantity(product, $event)"
+                >
+                  <Label for="quantity">Quantity</Label>
+                  <NumberFieldContent>
+                    <NumberFieldDecrement />
+                    <NumberFieldInput />
+                    <NumberFieldIncrement />
+                  </NumberFieldContent>
+                </NumberField>
               </div>
-              <p class="text-right text-sm font-medium text-blue-500">${{ product.price }}</p>
+              <p class="text-right text-sm font-medium text-blue-500">
+                ${{ (product.price * (product.quantity || 1)).toFixed(2) }}
+              </p>
             </div>
           </div>
           <div class="mt-4 flex items-center sm:absolute sm:left-1/2 sm:top-0 sm:mt-0 sm:block">
@@ -191,12 +219,3 @@ const total = computed(() => subtotal.value + shipping.value + tax.value)
     </div>
   </div>
 </template>
-
-<style scoped>
-.cart {
-  border: 1px solid #e5e7eb;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  background-color: #f9fafb;
-}
-</style>

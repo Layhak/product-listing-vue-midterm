@@ -6,6 +6,7 @@ type CartItem = {
     title: string
     price: number
     thumbnail: string
+    quantity: number
 }
 
 export const cartItems = ref<CartItem[]>([])
@@ -13,9 +14,22 @@ export const cartItems = ref<CartItem[]>([])
 export const addToCart = (item: CartItem) => {
     const existingItem = cartItems.value.find(cartItem => cartItem.id === item.id)
     if (!existingItem) {
+        // Ensure quantity is at least 1 when adding to cart
+        item.quantity = item.quantity || 1
         cartItems.value.push(item)
     } else {
         console.log(`Item with id ${item.id} already exists in the cart`)
+    }
+}
+
+export const updateQuantity = (id: number, quantity: number) => {
+    const item = cartItems.value.find(cartItem => cartItem.id === id)
+    if (item) {
+        if (quantity <= 0) {
+            removeFromCart(id)  // Remove item if quantity is 0 or less
+        } else {
+            item.quantity = quantity
+        }
     }
 }
 
@@ -40,9 +54,10 @@ Address: ${formData.address}
 --------------------------------------------------
 ${cartItems.value.map(item => ` 
     Product Name: ${item.title}   
-    Price: $${item.price} `).join('\n')}
+    Price: $${(item.price * item.quantity).toFixed(2)}
+    Quantity: ${item.quantity} `).join('\n')}
 --------------------------------------------------
- Total: $${cartItems.value.reduce((total, item) => total + item.price, 0).toFixed(2)}
+ Total: $${cartItems.value.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2)}
 `;
 
     axios.post('https://api.telegram.org/bot7082392197:AAFxpM_9qrGyftf5PkmXJNdzOqJsxnedZJc/sendMessage', {
